@@ -4,10 +4,11 @@ import json
 
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from sklearn.preprocessing import normalize
+from sklearn.metrics import precision_score
 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import load_model
 #%%
 def normalize_mention(mention):
     mention = re.sub(r'[,.;@#?!&$-:/]+\ *', ' ', mention)
@@ -15,22 +16,22 @@ def normalize_mention(mention):
 #%%
 with open('configs.json') as f:
     configs = json.load(f)
-
-train_path = configs['train']
+#%%
+model = load_model(configs['model_path'])
+test_path = configs['dev']
 mention_embeddings_path = configs['mention_embeddings_100']
 node_embeddings_path = configs['node_embeddings']
-model_save_path = configs['model_path']
 #%%
-a1_files = [f for f in os.listdir(train_path) if f.endswith('.a1')]
+a1_files = [f for f in os.listdir(test_path) if f.endswith('.a1')]
 #mention_to_node_id = {}
 mentions_and_node_ids = []          
 for a1_file in a1_files:
-    with open(train_path + a1_file, encoding='latin5') as a1:
+    with open(test_path + a1_file, encoding='latin5') as a1:
         annotations = [l.split('\t') for l in a1.readlines()]
         tag_to_mention = {annotation[0]: normalize_mention(annotation[-1]) for annotation in annotations if 'Habitat' in annotation[1]}
     
     a2_file = a1_file.replace('.a1', '.a2')
-    with open(train_path + a2_file) as a2:
+    with open(test_path + a2_file) as a2:
         annotations = [l.split() for l in a2.readlines()]
         
     tag_to_node_id = {annotation[2].split(':')[-1]: 'OBT:' + annotation[3].split(':')[-1] for annotation in annotations 
@@ -49,11 +50,14 @@ for a1_file in a1_files:
         node_id = tag_to_node_id[tag]
         mentions_and_node_ids.append((mention, node_id))
 #%%
-# get unique mappings
-mentions_and_node_ids = list(set(mentions_and_node_ids))
+print('Extracted mention node id pairs')
 #%%
 with open(mention_embeddings_path) as f:
     mention_embeddings = json.load(f)
+print('Loaded mention embeddings')
+#%%
+X_test = np.array([mention_embeddings[mention] for mention, node_id in mentions_and_node_ids])
+print('Computed X_test')
 #%%
 node_embeddings = {}
 with open(node_embeddings_path) as f:
@@ -61,20 +65,19 @@ with open(node_embeddings_path) as f:
     for line in lines:
         tokens = line.split()
         node_embeddings[tokens[0]] = [float(token) for token in tokens[1:]]
+print('Loaded node embeddings')
 #%%
-X_train, Y_train = [], []
-for mention, node_id in mentions_and_node_ids:
-    X_train.append(mention_embeddings[mention])
-    Y_train.append(node_embeddings[node_id])
-
-X_train = np.array(X_train)
-Y_train = normalize(Y_train)
+preds = normalize(model.predict(X_test))
+df_node_embeddings = pd.DataFrame(node_embeddings).T
+similarities = np.matmul(preds, normalize(df_node_embeddings).T)
+df_sims = pd.DataFrame(similarities, columns=df_node_embeddings.index)
+print('Computed df_sims')
 #%%
-model = Sequential()
-model.add(Dense(100, activation=None))
-model.compile(optimizer='rmsprop', loss='mse', metrics=['mse'])
-history = model.fit(X_train, Y_train, epochs=300, verbose=0).history
-model.save(model_save_path)
-
-plt.plot(history['loss'])
-plt.show()
+#plt.hist(similarities)
+#plt.show()
+#%%
+pred_names = df_sims.idxmax(axis=1)
+#%%
+node_ids = [node_id for mention, node_id in mentions_and_node_ids]
+#%%
+(pred_names == node_ids).sum() / len(node_ids)

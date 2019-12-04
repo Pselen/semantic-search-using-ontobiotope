@@ -5,6 +5,7 @@
 	"ontobiotope": "./data/2016/OntoBiotope_BioNLP-ST-2016.obo",
 	"enriched_ontobiotope": "./data/enriched_ontobiotope.gph",
 
+	"model_path": "./data/projection_model.h5",
 	"word_embeddings_100": "./data/word_vectors_100.json",
 	"mention_embeddings_100": "./data/mention_embeddings_100.json",
 	"node_embeddings": "./data/node_embeddings_100.txt"
