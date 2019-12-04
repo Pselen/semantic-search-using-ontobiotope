@@ -11,12 +11,15 @@ def normalize_mention(mention):
     return mention.strip()
 #%%
 # Read a1 files
-train_path = '../data/2016/BioNLP-ST-2016_BB-cat_train/'
-a1_files = [f for f in os.listdir(train_path) if f.endswith('.a1')]
+with open('configs.json') as f:
+    configs = json.load(f)
+
+train_path = configs['train']
+word_embeddings_file_path = configs['word_embeddings_100']
+mention_embeddings_file_path = configs['mention_embeddings_100']
 word_vector_dim = 100
-word_embeddings_file_path = f'../data/word-vectors-{word_vector_dim}.json'
-mention_embeddings_file_path = f'../data/mention-embeddings-{word_vector_dim}.json'
 #%%
+a1_files = [f for f in os.listdir(train_path) if f.endswith('.a1')]
 print('Extracting mentions')
 # Filter a1 files by Habitats
 habitat_mentions = []           

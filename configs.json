@@ -1,0 +1,11 @@
+{
+	"train": "./data/2016/BioNLP-ST-2016_BB-cat_train/",
+	"dev": "./data/2016/BioNLP-ST-2016_BB-cat_dev/",
+	"test": "./data/2016/BioNLP-ST-2016_BB-cat_test/",
+	"ontobiotope": "./data/2016/OntoBiotope_BioNLP-ST-2016.obo",
+	"enriched_ontobiotope": "./data/enriched_ontobiotope.gph",
+
+	"word_embeddings_100": "./data/word_vectors_100.json",
+	"mention_embeddings_100": "./data/mention_embeddings_100.json",
+	"node_embeddings": "./data/node_embeddings_100.txt"
+}

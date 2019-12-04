@@ -13,9 +13,14 @@ def normalize_mention(mention):
     mention = re.sub(r'[,.;@#?!&$-:/]+\ *', ' ', mention)
     return mention.strip()
 #%%
-train_path = '../data/2016/BioNLP-ST-2016_BB-cat_train/'
-a1_files = [f for f in os.listdir(train_path) if f.endswith('.a1')]
+with open('configs.json') as f:
+    configs = json.load(f)
+
+train_path = configs['train']
+mention_embeddings_path = configs['mention_embeddings_100']
+node_embeddings_path = configs['node_embeddings']
 #%%
+a1_files = [f for f in os.listdir(train_path) if f.endswith('.a1')]
 #mention_to_node_id = {}
 mentions_and_node_ids = []          
 for a1_file in a1_files:
@@ -46,11 +51,9 @@ for a1_file in a1_files:
 # get unique mappings
 mentions_and_node_ids = list(set(mentions_and_node_ids))
 #%%
-mention_embeddings_path = '../data/mention-embeddings-100.json'
 with open(mention_embeddings_path) as f:
     mention_embeddings = json.load(f)
 #%%
-node_embeddings_path = '../data/node_embeddings.txt'
 node_embeddings = {}
 with open(node_embeddings_path) as f:
     lines = f.readlines()[1:]
@@ -63,8 +66,8 @@ for mention, node_id in mentions_and_node_ids:
     X_train.append(mention_embeddings[mention])
     Y_train.append(node_embeddings[node_id])
 
-Y_train = normalize(Y_train)
 X_train = np.array(X_train)
+Y_train = normalize(Y_train)
 #%%
 model = Sequential()
 model.add(Dense(100, activation=None))

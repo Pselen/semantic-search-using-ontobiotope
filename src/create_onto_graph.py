@@ -1,6 +1,8 @@
+import json
 import os
 import re
 import networkx as nx
+#%%
 def parse_ontotbiotope(ontology_path):    
     with open(ontology_path) as f:
         # obtain each node by discarding initial comments
@@ -38,7 +40,7 @@ def parse_ontotbiotope(ontology_path):
     
     return graph
 
-def enrich_graph_with_cooccurence(graph, training_docs_path, window_size=3):
+def enrich_ontobiotope_with_cooccurence(graph, training_docs_path, window_size=3):
     counter = 0
     a2_files = [f for f in os.listdir(training_docs_path) if f.endswith('.a2')]
     for file in a2_files:
@@ -56,19 +58,21 @@ def enrich_graph_with_cooccurence(graph, training_docs_path, window_size=3):
                         counter = counter + 1
                         graph.add_edge('OBT:' + node_id, 'OBT:' + neighbor_id)
             
-    print(counter)
     return graph
 #%%
-ontology_path = '../data/2016/OntoBiotope_BioNLP-ST-2016.obo'
-training_docs_path = '../data/2016/BioNLP-ST-2016_BB-cat_train/'
+with open('configs.json') as f:
+    configs = json.load(f)
+#%%
+ontology_path = configs['ontobiotope']
+training_docs_path = configs['train']
 window_size = 37 # window size that edges all edges
 #%%
 graph = parse_ontotbiotope(ontology_path)
 print(f'Nodes:{graph.number_of_nodes()}, Edges:{graph.number_of_edges()}')
-graph = enrich_graph_with_cooccurence(graph, training_docs_path, window_size)
+graph = enrich_ontobiotope_with_cooccurence(graph, training_docs_path, window_size)
 print(f'Nodes:{graph.number_of_nodes()}, Edges:{graph.number_of_edges()}')
 #%%
-nx.readwrite.write_edgelist(graph, '../data/enriched_ontobiotope.gph', comments=None, data=False)
+nx.readwrite.write_edgelist(graph, configs['enriched_ontobiotope'], comments=None, data=False)
 #%%
 # >python -m openne --method node2vec 
 # --input ../../data/enriched_ontobiotope.gph 
