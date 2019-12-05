@@ -3,6 +3,7 @@
 	"dev": "./data/2016/BioNLP-ST-2016_BB-cat_dev/",
 	"test": "./data/2016/BioNLP-ST-2016_BB-cat_test/",
 	"ontobiotope": "./data/2016/OntoBiotope_BioNLP-ST-2016.obo",
+	"ontobiotope_graph": "./data/ontobiotope.gph",
 	"enriched_ontobiotope": "./data/enriched_ontobiotope.gph",
 
 	"model_path": "./data/projection_model.h5",

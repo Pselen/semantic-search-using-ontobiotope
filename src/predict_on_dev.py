@@ -5,6 +5,8 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import networkx as nx
+
 from sklearn.preprocessing import normalize
 from sklearn.metrics import precision_score
 
@@ -81,3 +83,28 @@ pred_names = df_sims.idxmax(axis=1)
 node_ids = [node_id for mention, node_id in mentions_and_node_ids]
 #%%
 (pred_names == node_ids).sum() / len(node_ids)
+#%%
+graph = nx.read_edgelist(configs['ontobiotope_graph'])
+#%%
+depths = nx.shortest_path_length(graph, source='OBT:000000')
+depth_of_tree = max(depths.values())
+diameter = nx.algorithms.distance_measures.diameter(graph)
+#depths = distances['OBT:000000']['OBT:000000']
+#%%
+sps = []
+for pred, node_id in zip(pred_names, node_ids):
+#    lcs = nx.lowest_common_ancestor(graph, pred, node_id)
+#    depth_lcs = depths[lcs]
+#    depth_pred = depths[pred]
+#    depth_label = depths[node_id]
+#    wp = 2*depth_lcs / (depth_pred + depth_label)
+#    wps.append(wp)
+    sp = nx.shortest_path_length(graph, source=pred, target=node_id)   
+    sps.append(sp)
+#%%
+import seaborn as sns
+sns.distplot(sps, bins=np.arange(0,max(sps)+1,1))
+plt.xticks(range(-2,max(sps)+1,1))
+plt.show()
+
+

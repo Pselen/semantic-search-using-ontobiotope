@@ -69,12 +69,10 @@ window_size = 37 # window size that edges all edges
 #%%
 graph = parse_ontotbiotope(ontology_path)
 print(f'Nodes:{graph.number_of_nodes()}, Edges:{graph.number_of_edges()}')
+nx.readwrite.write_edgelist(graph, configs['ontobiotope_graph'], comments=None, data=False)
+#%%
 enriched_graph = enrich_ontobiotope_with_cooccurence(graph, training_docs_path, window_size)
 print(f'Nodes:{graph.number_of_nodes()}, Edges:{graph.number_of_edges()}')
-#%%
-nx.readwrite.write_edgelist(graph, configs['ontobiotope_graph'], comments=None, data=False)
-
-#%%
 nx.readwrite.write_edgelist(enriched_graph, configs['enriched_ontobiotope'], comments=None, data=False)
 #%%
 # >python -m openne --method node2vec 
