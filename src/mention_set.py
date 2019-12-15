@@ -33,7 +33,7 @@ class MentionSet:
         # normalize mentions and get unique mentions only
         self.mentions = list(set([self._normalize_mention(mention) for mention in habitat_mentions]))
 
-    def learn_embeddings(self, pretrained_word_embeddings_path, save_path=None, del_pretrained=True):
+    def learn_embeddings(self, pretrained_word_embeddings_path, del_pretrained=True):
         if not self.pretrained_word_embeddings:
             print('Loading pretrained word vectors...')
             with open(pretrained_word_embeddings_path) as embedding_file:
@@ -59,15 +59,17 @@ class MentionSet:
                 mention_embedding = mention_embedding / word_count_in_mention
                 mention_embeddings[mention] = preprocessing.normalize([mention_embedding], norm='l2')[0].tolist()
 
-        if save_path:
-            with open(save_path, 'w') as f:
-                json.dump(mention_embeddings, f)
-
         if del_pretrained:
             self.pretrained_word_embeddings = None
 
         return mention_embeddings
 
-    def load_embeddings(self, mention_embeddings_path):
-        with open(mention_embeddings_path, 'w') as f:
+    @staticmethod
+    def save_embeddings(mention_embeddings, embeddings_path):
+        with open(embeddings_path, 'w') as f:
+            json.dump(mention_embeddings, f)
+
+    @staticmethod
+    def load_embeddings(mention_embeddings_path):
+        with open(mention_embeddings_path) as f:
             return json.load(f)

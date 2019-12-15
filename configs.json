@@ -2,13 +2,13 @@
 	"train": "./data/2016/BioNLP-ST-2016_BB-cat_train/",
 	"dev": "./data/2016/BioNLP-ST-2016_BB-cat_dev/",
 	"test": "./data/2016/BioNLP-ST-2016_BB-cat_test/",
-	"ontobiotope": "./data/2016/OntoBiotope_BioNLP-ST-2016.obo",
-	"ontobiotope_graph": "./data/ontobiotope.gph",
-	"enriched_ontobiotope": "./data/enriched_ontobiotope.gph",
+	"ontobiotope_raw": "./data/2016/OntoBiotope_BioNLP-ST-2016.obo",
+	"ontobiotope_nx": "./data/ontobiotope_nx.gph",
+	"ontobiotope_enriched": "./data/ontobiotope_enriched.gph",
 
 	"model_path": "./data/projection_model.h5",
 	"word_embeddings_100": "./data/word_vectors_100.json",
 	"mention_embeddings_100": "./data/mention_embeddings_100.json",
 	"ontobiotope_id_name_mapping": "./data/ontobiotope_id_name_mapping.json",
-	"node_embeddings": "./data/node_embeddings_100.txt"
+	"node_embeddings": "./data/node_embeddings_100.kv"
 }
