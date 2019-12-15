@@ -1,0 +1,4 @@
+python -m openne --method node2vec 
+ --input ../../data/enriched_ontobiotope.gph 
+ --graph-format edgelist --output ../../data/node_embeddings.txt 
+ --q 0.25 --p 0.25 --representation-size=100
