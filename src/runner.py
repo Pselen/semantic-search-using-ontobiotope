@@ -1,13 +1,16 @@
+import warnings
+warnings.filterwarnings('ignore')
 import json
 
 from src.ontobiotope import OntoBiotope
 from src.utils import extract_mention_node_matchings, matching_to_embedding
 from src.mention_set import MentionSet
 from src.projection_model import ProjectionModel
+from src.finder import Finder
 #%%
 
 
-def train(configs):
+def train(configs, pretrained_word_embeddings):
     ontobiotope = OntoBiotope(ontobiotope_path=configs['ontobiotope_raw'])
     ontobiotope.initialize()
     ontobiotope.save_graph(configs['ontobiotope_nx'])
@@ -20,7 +23,7 @@ def train(configs):
 
     mention_files = [configs['train'], configs['dev']]
     mention_set = MentionSet(mention_files)
-    mention_embeddings = mention_set.learn_embeddings(pretrained_word_embeddings_path=configs['word_embeddings_100'])
+    mention_embeddings = mention_set.learn_embeddings(pretrained_word_embeddings)
     MentionSet.save_embeddings(mention_embeddings, configs['mention_embeddings_100'])
 
     train_matchings = extract_mention_node_matchings(configs['train'])
@@ -48,5 +51,32 @@ def test(configs):
 with open('configs.json') as f:
     configs = json.load(f)
 
-train(configs)
-test(configs)
+print('Loading pretrained word vectors...')
+with open(configs['word_embeddings_100']) as embedding_file:
+    pretrained_word_embeddings = json.load(embedding_file)
+
+
+# train(configs, pretrained_word_embeddings)
+# test(configs)
+model = ProjectionModel()
+model.load(configs['model_path'])
+ontobiotope = OntoBiotope(configs['ontobiotope_raw'])
+ontobiotope.load_graph(configs['ontobiotope_enriched'])
+
+finder = Finder()
+finder.construct_inverted_index(configs['train'])
+#%%
+
+max_distance = 2
+query = 'children with age less than 5'
+query_embedding = MentionSet.mention_to_embedding(query)
+predicted_node_id = model.predict(query_embedding)
+related_docs = finder.find_related_docs(ontobiotope, predicted_node_id, max_distance)
+#%%
+# sps = nx.shortest_path_length(graph, source=node_id)
+# close_nodes = [node ]
+
+# related_docs = inverted_index[ontobiotope_id]
+# neighbors = graph.neighbors(ontobiotope_id, 2)
+# neihgbor_docs = [inverted_index[n] for n in neighbors]
+# nei

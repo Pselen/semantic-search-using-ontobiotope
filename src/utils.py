@@ -33,7 +33,6 @@ def normalize_mention(mention):
 
 def extract_mention_node_matchings(path):
     a1_files = [f for f in os.listdir(path) if f.endswith('.a1')]
-    #mention_to_node_id = {}
     mentions_and_node_ids = []
     for a1_file in a1_files:
         with open(path + a1_file, encoding='latin5') as a1:
