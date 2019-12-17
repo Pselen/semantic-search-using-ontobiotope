@@ -12,8 +12,6 @@ class MentionSet:
         self.file_paths = file_paths
         self.mentions = []
         self._populate_habitat_mentions()
-        self.pretrained_word_embeddings = None
-        self.oov = []
 
     def _normalize_mention(self, mention):
         return re.sub(r'[,.;@#?!&$-:/]+\ *', ' ', mention).strip()
@@ -33,36 +31,26 @@ class MentionSet:
         # normalize mentions and get unique mentions only
         self.mentions = list(set([self._normalize_mention(mention) for mention in habitat_mentions]))
 
-    def learn_embeddings(self, pretrained_word_embeddings_path, del_pretrained=True):
-        if not self.pretrained_word_embeddings:
-            print('Loading pretrained word vectors...')
-            with open(pretrained_word_embeddings_path) as embedding_file:
-                self.pretrained_word_embeddings = json.load(embedding_file)
+    @staticmethod
+    def mention_to_embedding(mention, pretrained_word_embeddings):
+        word_vector_shape = len(list(pretrained_word_embeddings.values())[0])
+        mention_embedding = np.zeros((word_vector_shape))
+        word_count_in_mention = 0
+        for word in mention.split():
+            word = word.strip()
+            if word in pretrained_word_embeddings:
+                mention_embedding = mention_embedding + pretrained_word_embeddings[word]
+                word_count_in_mention = word_count_in_mention + 1
+            elif word.lower() in pretrained_word_embeddings:
+                mention_embedding = mention_embedding + pretrained_word_embeddings[word.lower()]
+                word_count_in_mention = word_count_in_mention + 1
 
-        mention_embeddings = {}
-        word_vector_shape = len(list(self.pretrained_word_embeddings.values())[0])
-        for mention in self.mentions:
-            mention_embedding = np.zeros((word_vector_shape))
-            word_count_in_mention = 0
-            for word in mention.split():
-                word = word.strip()
-                if word in self.pretrained_word_embeddings:
-                    mention_embedding = mention_embedding + self.pretrained_word_embeddings[word]
-                    word_count_in_mention = word_count_in_mention + 1
-                elif word.lower() in self.pretrained_word_embeddings:
-                    mention_embedding = mention_embedding + self.pretrained_word_embeddings[word.lower()]
-                    word_count_in_mention = word_count_in_mention + 1
-                else:
-                    self.oov.append(word)
+        if word_count_in_mention > 0:
+            mention_embedding = mention_embedding / word_count_in_mention
+            return preprocessing.normalize([mention_embedding], norm='l2')[0].tolist()
 
-            if word_count_in_mention > 0:
-                mention_embedding = mention_embedding / word_count_in_mention
-                mention_embeddings[mention] = preprocessing.normalize([mention_embedding], norm='l2')[0].tolist()
-
-        if del_pretrained:
-            self.pretrained_word_embeddings = None
-
-        return mention_embeddings
+    def learn_embeddings(self, pretrained_word_embeddings):
+        return {mention: MentionSet.mention_to_embedding(mention, pretrained_word_embeddings) for mention in self.mentions}
 
     @staticmethod
     def save_embeddings(mention_embeddings, embeddings_path):

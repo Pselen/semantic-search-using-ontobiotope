@@ -39,8 +39,8 @@ class ProjectionModel:
 
         sps = [shortest_path_length(graph, source=pred, target=truth) for truth, pred in zip(truths, preds)]
 
-        sns.distplot(sps, bins=np.arange(0,max(sps)+1,1))
-        plt.xticks(range(-2,max(sps)+1,1))
+        sns.distplot(sps, bins=np.arange(0, max(sps) + 1, 1))
+        plt.xticks(range(-2, max(sps) + 1, 1))
         plt.title('Shortest Path Length Distribution')
         plt.show()
 
