@@ -76,10 +76,10 @@ class OntoBiotope:
 
     def save_graph(self, graph_path):
         print('Saving OntoBiotope as nx graph')
-        nx.readwrite.write_edgelist(self.graph, graph_path)
+        nx.readwrite.write_gexf(self.graph, graph_path, prettyprint=True)
 
     def load_graph(self, graph_path):
-        self.graph = nx.readwrite.read_edgelist(graph_path)
+        self.graph = nx.readwrite.read_gexf(graph_path)
 
     @staticmethod
     def save_embeddings(node_embeddings, embeddings_path):

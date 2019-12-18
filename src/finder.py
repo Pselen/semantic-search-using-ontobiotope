@@ -23,21 +23,37 @@ class Finder:
 
         self.inverted_index = dict(inverted_index)
 
-    # def find_related_docs(self, graph, node_id, max_distance=1):
-    #     sps = nx.shortest_path_length(graph, source=node_id)
-    #     # close_nodes = [node for node, dist in sps.items() if dist <= max_distance]
-    #     dist_to_nodes = defaultdict(list)
-    #     for node_id, dist in sps.items():
-    #         dist_to_nodes[dist].append(node_id)
+    def find_related_docs(self, graph, node_id, max_distance=1):
+        distances = nx.shortest_path_length(graph, source=node_id)
+        related_nodes = {node_id: dist for node_id, dist in distances.items() if dist <= max_distance}
+        related_nodes = sorted(related_nodes.items(), key=lambda x: x[1])
 
-    #     dist_to_docs = defaultdict(list)
-    #     for dist, node_id in dist_to_nodes rdf.items():
-    #         if node_id in self.inverted_index:
-    #             dist_to_docs[dist].extend(self.inverted_index[node_id])
+        search_results = {}
+        for node_id, dist in related_nodes:
+            if node_id in self.inverted_index:
+                docs_in_node = self.inverted_index[node_id]
+                search_results[(dist, node_id, graph.nodes(data=True)[node_id]['name'])] = docs_in_node
 
+        return search_results
 
-    #     close_docs = [set(self.inverted_index[node]) for node in close_nodes if node in self.inverted_index]
-    #     unique_docs = set.union(*close_docs)
-    #     close_docs_by_dist = [(sps[doc], doc) for doc in unique_docs]
-    #     close_docs_by_dist.sort()
-    #     return close_docs_by_dist
+    def display_search_results(self, search_results, doc_path):
+        doc_to_nodes = defaultdict(list)
+        for t, docs in search_results.items():
+            for doc in docs:
+                doc_to_nodes[doc].extend(t)
+
+        display = []
+        processed_results = set()
+        for t, docs in search_results.items():
+            for doc in docs:
+                if doc not in search_results:
+                    with open(doc_path + doc.replace('.a2', '.txt')) as f:
+                        file_content = f.read().strip()
+                    tag = ', '.join([str(node) for node in doc_to_nodes[doc]])
+                    display.append(tag + '\n' + file_content)
+                    processed_results.add(doc)
+
+        with open('./data/search_results.txt', 'w') as f:
+            f.write('\n\n'.join(display))
+
+        return ('\n'.join(display))
