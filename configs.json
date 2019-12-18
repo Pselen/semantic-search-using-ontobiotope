@@ -1,14 +1,14 @@
 {
-	"train": "./data/2016/BioNLP-ST-2016_BB-cat_train/",
-	"dev": "./data/2016/BioNLP-ST-2016_BB-cat_dev/",
-	"test": "./data/2016/BioNLP-ST-2016_BB-cat_test/",
-	"ontobiotope_raw": "./data/2016/OntoBiotope_BioNLP-ST-2016.obo",
-	"ontobiotope_nx": "./data/ontobiotope_nx.gph",
-	"ontobiotope_enriched": "./data/ontobiotope_enriched.gph",
+	"train": "./data/2019/BioNLP-ST-2019_BB-cat_train/",
+	"dev": "./data/2019/BioNLP-ST-2019_BB-cat_dev/",
+	"test": "./data/2019/BioNLP-ST-2019_BB-cat_test/",
+	"ontobiotope_raw": "./data/2019/OntoBiotope_BioNLP-ST-2019.obo",
+	"ontobiotope_nx": "./data/ontobiotope_nx_2019.gph",
+	"ontobiotope_enriched": "./data/ontobiotope_enriched_2019.gph",
 
-	"model_path": "./data/projection_model.h5",
-	"word_embeddings_100": "./data/word_vectors_100.json",
-	"mention_embeddings_100": "./data/mention_embeddings_100.json",
-	"ontobiotope_id_name_mapping": "./data/ontobiotope_id_name_mapping.json",
-	"node_embeddings": "./data/node_embeddings_100.kv"
+	"model_path": "./data/projection_model_2019.h5",
+	"word_embeddings_100": "./data/word_vectors_100_2019.json",
+	"mention_embeddings_100": "./data/mention_embeddings_100_2019.json",
+	"ontobiotope_id_name_mapping": "./data/ontobiotope_id_name_mapping_2019.json",
+	"node_embeddings": "./data/node_embeddings_100_2019.kv"
 }
