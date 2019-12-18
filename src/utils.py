@@ -54,10 +54,16 @@ def extract_mention_node_matchings(path):
 
 def matching_to_embedding(matching, mention_embeddings, node_embeddings):
     X, Y = [], []
+    #print(sum([mention not in mention_embeddings for mention, node_id in matching]))
     for mention, node_id in matching:
         X.append(mention_embeddings[mention])
         Y.append(node_embeddings[node_id])
-
+        try:
+            len(mention_embeddings[mention])
+        except:
+            print(mention_embeddings[mention])
+            print(mention)
+    
     X = normalize(X)
     Y = normalize(Y)
     return X, Y

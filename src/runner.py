@@ -56,8 +56,8 @@ with open(configs['word_embeddings_100']) as embedding_file:
     pretrained_word_embeddings = json.load(embedding_file)
 
 #%%
-# train(configs, pretrained_word_embeddings)
-# test(configs)
+train(configs, pretrained_word_embeddings)
+test(configs)
 
 model = ProjectionModel()
 model.load(configs['model_path'])
@@ -65,11 +65,11 @@ ontobiotope = OntoBiotope(configs['ontobiotope_raw'])
 ontobiotope.load_graph(configs['ontobiotope_nx'])
 node_embeddings = OntoBiotope.load_embeddings(configs['node_embeddings'])
 #%%
-finder = Finder()
-finder.construct_inverted_index(configs['train'])
+# finder = Finder()
+# finder.construct_inverted_index(configs['train'])
 
-max_distance = 2
-query = 'children with age less than 5'
-query_embedding = MentionSet.mention_to_embedding(query, pretrained_word_embeddings)
-predicted_node_id = model.predict(np.array(query_embedding).reshape((1, 100)), node_embeddings)[0]
-related_docs = finder.find_related_docs(ontobiotope.graph, predicted_node_id, max_distance)
+# max_distance = 2
+# query = 'children with age less than 5'
+# query_embedding = MentionSet.mention_to_embedding(query, pretrained_word_embeddings)
+# predicted_node_id = model.predict(np.array(query_embedding).reshape((1, 100)), node_embeddings)[0]
+# related_docs = finder.find_related_docs(ontobiotope.graph, predicted_node_id, max_distance)

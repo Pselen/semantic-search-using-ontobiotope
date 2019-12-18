@@ -47,7 +47,9 @@ class MentionSet:
 
         if word_count_in_mention > 0:
             mention_embedding = mention_embedding / word_count_in_mention
-            return preprocessing.normalize([mention_embedding], norm='l2')[0].tolist()
+            return preprocessing.normalize([mention_embedding], norm='l2').tolist()
+
+        return np.zeros((word_vector_shape))[0].tolist()
 
     def learn_embeddings(self, pretrained_word_embeddings):
         return {mention: MentionSet.mention_to_embedding(mention, pretrained_word_embeddings) for mention in self.mentions}
