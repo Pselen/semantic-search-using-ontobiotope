@@ -48,6 +48,29 @@ def test(configs):
     model.evaluate(Y_test, preds, ontobiotope.graph)
 
 
+def query(query_string, max_distance):
+    model = ProjectionModel()
+    model.load(configs['model_path'])
+    ontobiotope = OntoBiotope(configs['ontobiotope_raw'])
+    ontobiotope.load_graph(configs['ontobiotope_nx'])
+
+    ontobiotope_enriched = OntoBiotope(configs['ontobiotope_raw'])
+    ontobiotope_enriched.load_graph(configs['ontobiotope_enriched'])
+    node_embeddings = OntoBiotope.load_embeddings(configs['node_embeddings'])
+
+    finder = Finder()
+    finder.construct_inverted_index(configs['train'])
+
+    query_embedding = MentionSet.mention_to_embedding(query_string, pretrained_word_embeddings)
+    predicted_node_id = model.predict(np.array(query_embedding).reshape((1, 100)), node_embeddings)[0]
+
+    taxonomy_results = finder.find_related_docs(ontobiotope.graph, predicted_node_id, max_distance)
+    finder.display_search_results(taxonomy_results, configs['train'], './data/taxonomy_results.txt')
+
+    cooccurrence_results = finder.find_related_docs(ontobiotope_enriched.graph, predicted_node_id, max_distance)
+    finder.display_search_results(cooccurrence_results, configs['train'], './data/cooccurrence_results.txt')
+
+
 with open('configs.json') as f:
     configs = json.load(f)
 
@@ -56,23 +79,6 @@ with open(configs['word_embeddings_100']) as embedding_file:
     pretrained_word_embeddings = json.load(embedding_file)
 
 #%%
-train(configs, pretrained_word_embeddings)
-test(configs)
-
-model = ProjectionModel()
-model.load(configs['model_path'])
-ontobiotope = OntoBiotope(configs['ontobiotope_raw'])
-ontobiotope.load_graph(configs['ontobiotope_nx'])
-node_embeddings = OntoBiotope.load_embeddings(configs['node_embeddings'])
-
-finder = Finder()
-finder.construct_inverted_index(configs['train'])
-#%%
-max_distance = 2
-query = 'children with age less than 5'
-query_embedding = MentionSet.mention_to_embedding(query, pretrained_word_embeddings)
-predicted_node_id = model.predict(np.array(query_embedding).reshape((1, 100)), node_embeddings)[0]
-#%%
-search_results = finder.find_related_docs(ontobiotope.graph, predicted_node_id, max_distance)
-#%%
-results = finder.display_search_results(search_results, configs['train'])
+# train(configs, pretrained_word_embeddings)
+# test(configs)
+query('infant', 2)

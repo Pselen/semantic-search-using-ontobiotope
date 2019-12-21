@@ -25,18 +25,18 @@ class Finder:
 
     def find_related_docs(self, graph, node_id, max_distance=1):
         distances = nx.shortest_path_length(graph, source=node_id)
-        related_nodes = {node_id: dist for node_id, dist in distances.items() if dist <= max_distance}
+        related_nodes = {related_node_id: dist for related_node_id, dist in distances.items() if dist <= max_distance}
         related_nodes = sorted(related_nodes.items(), key=lambda x: x[1])
 
         search_results = {}
-        for node_id, dist in related_nodes:
-            if node_id in self.inverted_index:
-                docs_in_node = self.inverted_index[node_id]
-                search_results[(dist, node_id, graph.nodes(data=True)[node_id]['name'])] = docs_in_node
+        for related_node_id, dist in related_nodes:
+            if related_node_id in self.inverted_index:
+                docs_in_node = self.inverted_index[related_node_id]
+                search_results[(dist, related_node_id, graph.nodes(data=True)[related_node_id]['name'])] = docs_in_node
 
         return search_results
 
-    def display_search_results(self, search_results, doc_path):
+    def display_search_results(self, search_results, doc_path, results_filename):
         doc_to_nodes = defaultdict(list)
         for t, docs in search_results.items():
             for doc in docs:
@@ -46,14 +46,14 @@ class Finder:
         processed_results = set()
         for t, docs in search_results.items():
             for doc in docs:
-                if doc not in search_results:
-                    with open(doc_path + doc.replace('.a2', '.txt')) as f:
+                if doc not in processed_results:
+                    with open(doc_path + doc.replace('.a2', '.txt'), errors='ignore') as f:
                         file_content = f.read().strip()
                     tag = ', '.join([str(node) for node in doc_to_nodes[doc]])
-                    display.append(tag + '\n' + file_content)
+                    display.append(tag + '\n' + doc + '\n' + file_content)
                     processed_results.add(doc)
 
-        with open('./data/search_results.txt', 'w') as f:
+        with open(results_filename, 'w') as f:
             f.write('\n\n'.join(display))
 
         return ('\n'.join(display))
