@@ -41,7 +41,9 @@ class ProjectionModel:
 
         sns.distplot(sps, bins=np.arange(0, max(sps) + 1, 1))
         plt.xticks(range(-2, max(sps) + 1, 1))
-        plt.title('Shortest Path Length Distribution')
+        plt.xlabel('Distance to Gold Truth')
+        plt.ylabel('Frequency')
+        plt.title('Shortest Distance to Gold Truth Distribution')
         plt.show()
 
     def save(self, save_path):
