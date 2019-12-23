@@ -26,6 +26,9 @@ class ProjectionModel:
                                  epochs=epochs, verbose=0).history
 
         plt.plot(history['loss'])
+        plt.title('Projection Loss by Epoch')
+        plt.ylabel('Projection Loss')
+        plt.xlabel('Training Epoch')
         plt.show()
         return history
 

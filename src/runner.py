@@ -31,7 +31,9 @@ def train(configs, pretrained_word_embeddings):
     model = ProjectionModel()
     model.train(X_train, Y_train)
     model.save(configs['model_path'])
-    model.evaluate(Y_train, model.predict(X_train, node_embeddings), ontobiotope.graph)
+
+    train_labels = [node_id for mention, node_id in train_matchings]
+    model.evaluate(train_labels, model.predict(X_train, node_embeddings), ontobiotope.graph)
 
 
 def test(configs):
@@ -80,6 +82,6 @@ with open(configs['word_embeddings_100']) as embedding_file:
     pretrained_word_embeddings = json.load(embedding_file)
 
 #%%
-train(configs, pretrained_word_embeddings)
-test(configs)
-# query('pathogen in eyes', 2)
+# train(configs, pretrained_word_embeddings)
+# test(configs)
+query('children with age less than 5', 2)
