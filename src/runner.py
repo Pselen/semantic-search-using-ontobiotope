@@ -82,6 +82,6 @@ with open(configs['word_embeddings_100']) as embedding_file:
     pretrained_word_embeddings = json.load(embedding_file)
 
 #%%
-# train(configs, pretrained_word_embeddings)
-# test(configs)
+train(configs, pretrained_word_embeddings)
+test(configs)
 query('children with age less than 5', 2)
