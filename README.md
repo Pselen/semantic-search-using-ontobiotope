@@ -29,9 +29,9 @@ To search unstructured PubMed abstracts, we follow a two-step methodology.
 - In the first step, our goal is to represent the abstracts in a more structured way. We use the annotated abstracts to serve our goal. We both learn a model to map free-text mentions to OntoBiotope classes and construct an index that maps OntoBiotope classes to the PubMed abstracts. The former lets us find the OntoBiotope class (i.e. bacteria habitat) that the query is relevant to, whereas the latter enables us to retrieve the abstracts that mention the relevant habitat. Note that the former one is called *entity normalization* since it maps differently expressed but semantically the same entities to the same ontology class, i.e.
 normalize them.
 - In the second step, we aim to leverage OntoBiotope to infer relevant habitats to enrich the search results. Given a user-defined query, we first map it to an OntoBiotope class by the mapping model to find the related bacteria habitat.
-Then thanks to OntoBiotope, we find related habitats to the found one and enrich the search result. We display the abstracts that mention the mapped and related habitats to the user. We name this step as Semantic Search, since it utilizes the semantic hierarchy in OntoBiotope. The image below shows the flow of the methodology. 
+Then thanks to OntoBiotope, we find related habitats to the found one and enrich the search result. We display the abstracts that mention the mapped and related habitats to the user. We name this step as Semantic Search, since it utilizes the semantic hierarchy in OntoBiotope. The image below shows the flow of the methodology. To see the detailed analysis please check the [project report](./deliverables/Term_Project_Report.pdf).
 
-![Methodology Flow](./figure/methodology.png)
+![Methodology Flow](./figures/methodology.png)
 
 ## Technologies Used
 - Python - version 3.8
@@ -40,40 +40,14 @@ Then thanks to OntoBiotope, we find related habitats to the found one and enrich
 ## Example Scnerios
 - Query: brain damage
 	> Search result without improvement:
-		- bone fracture
-		- wound
+		- bone fracture, wound
 	> Search result with improvement:
-		- bone fracture
-		- drug resistant
-		- head
-		- pathogen
-		- intensive care unit
-		- blood 
-		- wound
-		- central nervous system
-		- patient
-		- brain
+		- bone fracture, drug resistant, head, pathogen, intensive care unit, blood, wound, central nervous system, patient, brain.
 - Query: child with respiratory illness
 	> Search result without improvement:
-		- nasopharynx
-		- throat
-		- pharynx
+		- nasopharynx, throat, pharynx.
 	> Search result with improvement:
-		- nasopharynx
-		- medical sample 
-		- human pathogen
-		- microflora 
-		- respiratory tract
-		- child
-		- healthy person throat
-		- welfare center
-		- baby
-		- hospital
-		- infant
-		- clinic 
-		- patient with infectious disease
-		- pharynx
-		- patient
+		- nasopharynx, medical sample, human pathogen, microflora, respiratory tract, child, healthy person throat, welfare center, baby, hospital, infant, clinic, patient with infectious disease, pharynx, patient.
 
 
 ## Project Status
